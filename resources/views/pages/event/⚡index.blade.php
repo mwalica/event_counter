@@ -13,7 +13,6 @@ use Livewire\WithPagination;
 
 new class extends Component {
 
-    use WithPagination;
 
     #[Url]
     public $sortBy = '';
@@ -44,7 +43,13 @@ new class extends Component {
         return Event::query()->with('type')
             ->whereHas('type', fn($query) => $query->where('archived', false))
             ->when($this->selectedType > 0, fn($query) => $query->where('type_id', $this->selectedType))
-            ->tap(fn($query) => $this->sortBy ? $query->orderBy($this->sortBy, $this->sortDirection) : $query)->simplePaginate(5);
+            ->tap(fn($query) => $this->sortBy ? $query->orderBy($this->sortBy, $this->sortDirection) : $query)->get();
+    }
+
+    #[Computed]
+    public function totalAmount(): int
+    {
+        return $this->events()->sum('amount');
     }
 
     public function sort($column): void
@@ -121,63 +126,78 @@ new class extends Component {
 
 <div class="mx-auto max-w-4xl flex flex-col gap-4">
     <flux:heading level="3" size="xl" class="text-center font-semibold">Events</flux:heading>
-    <div class="flex justify-end gap-4">
-        <flux:select
-            variant="listbox"
-            wire:model.live="selectedType"
-            placeholder="select type name"
-            :disabled="$types->isEmpty()"
-            class="w-fit"
-        >
-            <flux:select.option value="0">All types</flux:select.option>
-            @foreach($types as $type)
-                <flux:select.option value="{{$type->id}}" :key="$type->id">{{$type->name}}</flux:select.option>
-            @endforeach
-        </flux:select>
-        <flux:modal.trigger name="event-form" class="flex justify-end">
-            <flux:button type="button" class="w-fit cursor-pointer" variant="primary" :disabled="$types->isEmpty()">Add Event</flux:button>
-        </flux:modal.trigger>
-    </div>
+
+    <flux:card variant="muted" body="flush">
+        <flux:card.header>
+            <flux:card.heading>Events: {{$this->totalAmount}}</flux:card.heading>
+
+            <flux:card.actions>
+                <flux:select
+                    variant="listbox"
+                    wire:model.live="selectedType"
+                    placeholder="select type name"
+                    :disabled="$types->isEmpty()"
+                    class="w-fit"
+                    aria-label="Filter transactions"
+                >
+                    <flux:select.option value="0">All types</flux:select.option>
+                    @foreach($types as $type)
+                        <flux:select.option value="{{$type->id}}" :key="$type->id">{{$type->name}}</flux:select.option>
+                    @endforeach
+                </flux:select>
+                <flux:modal.trigger name="event-form" class="flex justify-end">
+                    <flux:button type="button" class="w-fit cursor-pointer" variant="primary" :disabled="$types->isEmpty()">Add Event</flux:button>
+                </flux:modal.trigger>
+            </flux:card.actions>
+        </flux:card.header>
+
+        <flux:card.body>
+            <flux:table bleed>
+                <flux:table.columns>
+                    <flux:table.column class="w-full text-zinc-900">Name (description)</flux:table.column>
+                    <flux:table.column class="w-px whitespace-nowrap">Amount</flux:table.column>
+                    <flux:table.column class="w-px whitespace-nowrap" align="center"
+                                       sortable
+                                       :sorted="$sortBy === 'event_date'"
+                                       :direction="$sortDirection"
+                                       wire:click="sort('event_date')">Date
+                    </flux:table.column>
+                    <flux:table.column class="w-px whitespace-nowrap"></flux:table.column>
+                </flux:table.columns>
+                <flux:table.rows>
+                    @forelse($this->events as $item)
+                        <flux:table.row :key="$item->id">
+                            <flux:table.cell variant="strong">
+                                <flux:heading> {{$item->type->name}}</flux:heading>
+                                @if($item->description !== null)
+                                    <flux:text class="text-zinc-400 font-light text-xs">{{$item->description}}</flux:text>
+                                @endif
+                            </flux:table.cell>
+                            <flux:table.cell align="center">
+                                {{$item->amount}}
+                            </flux:table.cell>
+                            <flux:table.cell>
+                                {{$item->dateFormatted}}
+                            </flux:table.cell>
+                            <flux:table.cell align="center" class="**:cursor-pointer flex gap-4">
+                                <flux:button icon="trash" wire:confirm="Do you want to delete event?"
+                                             wire:click="delete({{$item->id}})"/>
+                                <flux:button icon="square-pen" wire:click="edit({{$item->id}})"/>
+                            </flux:table.cell>
+                        </flux:table.row>
+                    @empty
+                        <flux:table.row>
+                            <flux:table.cell variant="strong" colspan="4" align="center">
+                                No events in DB
+                            </flux:table.cell>
+                        </flux:table.row>
+                    @endforelse
+                </flux:table.rows>
+            </flux:table>
+        </flux:card.body>
+    </flux:card>
 
 
-    @if($this->events->isEmpty())
-        <flux:text>No events in DB</flux:text>
-    @else
-        <flux:table :paginate="$this->events">
-            <flux:table.columns>
-                <flux:table.column class="w-full text-zinc-900">Name (description)</flux:table.column>
-                <flux:table.column class="w-px whitespace-nowrap">Amount</flux:table.column>
-                <flux:table.column class="w-px whitespace-nowrap" align="center"
-                                   sortable
-                                   :sorted="$sortBy === 'event_date'"
-                                   :direction="$sortDirection"
-                                   wire:click="sort('event_date')">Date
-                </flux:table.column>
-                <flux:table.column class="w-px whitespace-nowrap"></flux:table.column>
-            </flux:table.columns>
-            <flux:table.rows>
-                @foreach($this->events as $item)
-                    <flux:table.row :key="$item->id">
-                        <flux:table.cell variant="strong">{{$item->type->name}}@if($item->description !== null)
-                                <br><span class="text-zinc-400 font-light text-xs">{{$item->description}}</span>
-                            @endif
-                        </flux:table.cell>
-                        <flux:table.cell align="center">
-                            {{$item->amount}}
-                        </flux:table.cell>
-                        <flux:table.cell>
-                            {{$item->dateFormatted}}
-                        </flux:table.cell>
-                        <flux:table.cell align="center" class="**:cursor-pointer flex gap-4">
-                            <flux:button icon="trash" wire:confirm="Do you want to delete event?"
-                                         wire:click="delete({{$item->id}})"/>
-                            <flux:button icon="square-pen" wire:click="edit({{$item->id}})"/>
-                        </flux:table.cell>
-                    </flux:table.row>
-                @endforeach
-            </flux:table.rows>
-        </flux:table>
-    @endif
     <flux:modal name="event-form" class="w-2/3 space-y-6" @close="closeModal">
         <flux:heading>{{$this->event ? "Edit Event" : "Create Event"}}</flux:heading>
         <flux:separator/>

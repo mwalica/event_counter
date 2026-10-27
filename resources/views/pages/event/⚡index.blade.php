@@ -16,7 +16,7 @@ new #[Title('Event Counter')] class extends Component {
 
 
     #[Url]
-    public $sortBy = '';
+    public $sortBy = 'event_date';
     #[Url]
     public $sortDirection = 'desc';
 
@@ -44,7 +44,7 @@ new #[Title('Event Counter')] class extends Component {
         return Event::query()->with('type')
             ->whereHas('type', fn($query) => $query->where('archived', false))
             ->when($this->selectedType > 0, fn($query) => $query->where('type_id', $this->selectedType))
-            ->tap(fn($query) => $this->sortBy ? $query->orderBy($this->sortBy, $this->sortDirection) : $query)->get();
+            ->tap(fn($query) => $this->sortBy ? $query->orderBy($this->sortBy, $this->sortDirection) : $query->orderByDesc('event_date'))->get();
     }
 
     #[Computed]

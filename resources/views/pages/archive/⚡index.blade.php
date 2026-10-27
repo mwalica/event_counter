@@ -6,12 +6,14 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-new class extends Component {
+new #[Title('Archive - EventCounter')]
+class extends Component {
 
     use WithPagination;
 
@@ -22,7 +24,6 @@ new class extends Component {
 
     public Collection $types;
     public int $selectedType = 0;
-
 
 
     #[Computed]

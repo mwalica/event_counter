@@ -15,23 +15,16 @@
         @livewireStyles
         @fluxAppearance
     </head>
-    <body class="min-h-dvh bg-zinc-50 dark:bg-zinc-900">
+    <body class="min-h-screen bg-white dark:bg-zinc-800 antialiased">
 
-    <flux:header container class="bg-zinc-50 dark:bg-zinc-900">
+    <flux:header container class="bg-zinc-50 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-700">
         <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
         <flux:navbar class="-mb-px max-lg:hidden">
             <flux:navbar.item icon="calendar-days" href="{{route('event.index')}}" wire:navigate>Events</flux:navbar.item>
             <flux:navbar.item icon="tag" href="{{route('type.index')}}" wire:navigate>Types</flux:navbar.item>
             <flux:navbar.item icon="archive" href="{{route('archive.index')}}" wire:navigate>Archive</flux:navbar.item>
             <flux:separator vertical variant="subtle" class="my-2"/>
-            <flux:dropdown class="max-lg:hidden">
-                <flux:navbar.item icon:trailing="chevron-down">Admin</flux:navbar.item>
-                <flux:navmenu>
-                    <flux:navmenu.item href="/">Events</flux:navmenu.item>
-                    <flux:navmenu.item href="#">Android app</flux:navmenu.item>
-                    <flux:navmenu.item href="#">Brand guidelines</flux:navmenu.item>
-                </flux:navmenu>
-            </flux:dropdown>
+            <flux:navbar.item icon="log-out" href="{{route('logout')}}" wire:navigate>Logout</flux:navbar.item>
         </flux:navbar>
         <flux:spacer />
         <flux:switch x-data x-model="$flux.dark" label="Dark mode"  />
@@ -53,7 +46,7 @@
 
     </flux:sidebar>
 
-    <flux:main inset container class="lg:mt-0">
+    <flux:main container class="lg:mt-0">
         {{ $slot }}
     </flux:main>
 

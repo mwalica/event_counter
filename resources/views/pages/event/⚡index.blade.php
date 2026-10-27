@@ -6,12 +6,13 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-new class extends Component {
+new #[Title('Event Counter')] class extends Component {
 
 
     #[Url]
@@ -146,7 +147,9 @@ new class extends Component {
                     @endforeach
                 </flux:select>
                 <flux:modal.trigger name="event-form" class="flex justify-end">
-                    <flux:button type="button" class="w-fit cursor-pointer" variant="primary" :disabled="$types->isEmpty()">Add Event</flux:button>
+                    <flux:button type="button" class="w-fit cursor-pointer" variant="primary"
+                                 :disabled="$types->isEmpty()">Add Event
+                    </flux:button>
                 </flux:modal.trigger>
             </flux:card.actions>
         </flux:card.header>
@@ -170,7 +173,8 @@ new class extends Component {
                             <flux:table.cell variant="strong">
                                 <flux:heading> {{$item->type->name}}</flux:heading>
                                 @if($item->description !== null)
-                                    <flux:text class="text-zinc-400 font-light text-xs">{{$item->description}}</flux:text>
+                                    <flux:text
+                                        class="text-zinc-400 font-light text-xs">{{$item->description}}</flux:text>
                                 @endif
                             </flux:table.cell>
                             <flux:table.cell align="center">

@@ -7,7 +7,7 @@ use Livewire\Attributes\Locked;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
-new class extends Component {
+new #[Title('Types - EventCounter')]class extends Component {
 
     #[Validate('required|string|min:3')]
     public $name = '';

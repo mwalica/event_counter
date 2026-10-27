@@ -1,9 +1,14 @@
 <?php
 
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
-new class extends Component {
+new
+#[Layout('layouts.login')]
+#[Title('Login to EventCounter')]
+class extends Component {
     #[Validate('required|email')]
     public string $email = '';
 
@@ -30,18 +35,22 @@ new class extends Component {
 
 ?>
 
-<div>
-    <flux:heading level="3" size="xl" class="text-center font-semibold">Login</flux:heading>
-    <form wire:submit="authenticate()">
-        <flux:input type="email" wire:model="email" label="E-mail"/>
-        <flux:input type="password" wire:model="password" label="Password"/>
-        <flux:button type="submit" variant="primary" class="w-fit cursor-pointer">Login</flux:button>
-    </form>
+<div class="mx-auto max-w-3xl flex justify-center items-center h-full">
+    <flux:card class="w-full h-fit -translate-y-16">
+        <flux:heading level="3" size="xl" class="text-center font-semibold"><flux:icon.log-in class="inline -translate-y-[1px]" />Login</flux:heading>
+        <form wire:submit="authenticate()" class="space-y-8">
+            <flux:input type="email" wire:model="email" label="E-mail"/>
+            <flux:input type="password" wire:model="password" label="Password"/>
+            <flux:button type="submit" variant="primary" class="w-fit cursor-pointer">Login</flux:button>
+        </form>
 
 
-    @if($loginMessage)
-        <flux:text>
-            {{$loginMessage}}
-        </flux:text>
-    @endisset
+        @if($loginMessage)
+            <flux:text class="mt-4">
+                {{$loginMessage}}
+            </flux:text>
+        @endisset
+    </flux:card>
+
+
 </div>

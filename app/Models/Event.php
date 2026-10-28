@@ -9,6 +9,8 @@ use Illuminate\Support\Carbon;
 
 class Event extends Model
 {
+
+    public const array SORTABLE_COLUMNS = ['event_date'];
     protected $fillable = ['type_id', 'description', 'amount', 'event_date'];
 
     public function type(): BelongsTo
@@ -27,6 +29,18 @@ class Event extends Model
     {
         return Attribute::make(
             get: fn() => Carbon::parse($this->event_date)->format('j M Y')
+        );
+    }
+
+    protected function badgeColor() :Attribute
+    {
+        return Attribute::make(
+            get: fn() => match($this->amount) {
+                1 => 'sky',
+                2 => 'fuchsia',
+                3 => 'red',
+                default => 'lime'
+            }
         );
     }
 }

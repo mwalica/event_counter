@@ -94,7 +94,7 @@ class extends Component {
                 <flux:table.rows>
                     @forelse($this->types as $type)
                         <flux:table.row :key="$type->id">
-                            <flux:table.cell variant="strong" class="text-zinc-700">{{$type->name}}</flux:table.cell>
+                            <flux:table.cell class="text-zinc-700">{{$type->name}}</flux:table.cell>
                             <flux:table.cell align="center">
                                 <flux:switch :checked="$type->archived" wire:change="toggleArchived({{$type->id}})"/>
                             </flux:table.cell>

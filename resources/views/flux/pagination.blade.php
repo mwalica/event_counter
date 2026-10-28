@@ -23,7 +23,7 @@ $scrollIntoViewJsSnippet = ($scrollTo !== null && $scrollTo !== false)
 @endphp
 
 @if ($simple)
-    <div {{ $attributes->class('pt-3 border-t border-zinc-100 dark:border-zinc-700 flex justify-between items-center') }} data-flux-pagination>
+    <div {{ $attributes->class('pt-3 border-t border-zinc-100 dark:border-zinc-700 flex justify-center items-center') }} data-flux-pagination>
         <div></div>
 
         @if ($paginator->hasPages())

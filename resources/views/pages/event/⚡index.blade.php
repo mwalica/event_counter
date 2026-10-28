@@ -2,6 +2,7 @@
 
 use App\Models\Event;
 use App\Models\Type;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
@@ -12,11 +13,14 @@ use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-new #[Title('Event Counter')] class extends Component {
+new #[Title('Event Counter')]
+class extends Component {
+
+    use WithPagination;
 
 
     #[Url]
-    public $sortBy = 'event_date';
+    public $sortBy = '';
     #[Url]
     public $sortDirection = 'desc';
 
@@ -37,20 +41,29 @@ new #[Title('Event Counter')] class extends Component {
 
     public ?Event $event = null;
 
+    private function filteredEvents(): Builder
+    {
+        return Event::query()
+            ->whereHas('type', fn($query) => $query->where('archived', false))
+            ->when($this->selectedType > 0, fn($query) => $query->where('type_id', $this->selectedType));
+    }
 
     #[Computed]
     public function events()
     {
-        return Event::query()->with('type')
-            ->whereHas('type', fn($query) => $query->where('archived', false))
-            ->when($this->selectedType > 0, fn($query) => $query->where('type_id', $this->selectedType))
-            ->tap(fn($query) => $this->sortBy ? $query->orderBy($this->sortBy, $this->sortDirection) : $query->orderByDesc('event_date'))->get();
+
+        $column = in_array($this->sortBy, Event::SORTABLE_COLUMNS, true) ? $this->sortBy : 'event_date';
+        $direction = $this->sortDirection === 'asc' ? 'asc' : 'desc';
+        return $this->filteredEvents()
+            ->with('type')
+            ->orderBy($column, $direction)
+            ->simplePaginate(8);
     }
 
     #[Computed]
     public function totalAmount(): int
     {
-        return $this->events()->sum('amount');
+        return (int) $this->filteredEvents()->sum('amount');
     }
 
     public function sort($column): void
@@ -112,7 +125,6 @@ new #[Title('Event Counter')] class extends Component {
             ]);
         }
 
-
         $this->resetForm();
         unset($this->events);
         Flux::modal('event-form')->close();
@@ -122,6 +134,7 @@ new #[Title('Event Counter')] class extends Component {
     {
         $this->resetForm();
     }
+
 };
 ?>
 
@@ -170,7 +183,7 @@ new #[Title('Event Counter')] class extends Component {
                 <flux:table.rows>
                     @forelse($this->events as $item)
                         <flux:table.row :key="$item->id">
-                            <flux:table.cell  class="text-zinc-700">
+                            <flux:table.cell class="text-zinc-700">
                                 {{$item->type->name}}
                                 @if($item->description !== null)
                                     <flux:text
@@ -178,7 +191,7 @@ new #[Title('Event Counter')] class extends Component {
                                 @endif
                             </flux:table.cell>
                             <flux:table.cell align="center" class="text-zinc-700">
-                                {{$item->amount}}
+                                <flux:badge rounded :color="$item->badgeColor">{{$item->amount}}</flux:badge>
                             </flux:table.cell>
                             <flux:table.cell class="text-zinc-700">
                                 {{$item->dateFormatted}}
@@ -200,6 +213,7 @@ new #[Title('Event Counter')] class extends Component {
             </flux:table>
         </flux:card.body>
     </flux:card>
+    <flux:pagination :paginator="$this->events" class="border-0! -mt-2"/>
 
 
     <flux:modal name="event-form" class="w-2/3 space-y-6" @close="closeModal">
@@ -217,7 +231,7 @@ new #[Title('Event Counter')] class extends Component {
             </flux:field>
             <flux:textarea label="Description" wire:model="description"/>
             <flux:input type="number" label="Amount" wire:model="amount" badge="required"/>
-            <flux:date-picker wire:model="eventDate" label="Event date" badge="required" />
+            <flux:date-picker wire:model="eventDate" label="Event date" badge="required"/>
             <flux:button type="submit" variant="primary" class="cursor-pointer">Save</flux:button>
         </form>
     </flux:modal>

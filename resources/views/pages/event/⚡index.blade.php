@@ -130,7 +130,7 @@ new #[Title('Event Counter')] class extends Component {
 
     <flux:card variant="muted" body="flush">
         <flux:card.header class="py-4">
-            <flux:card.heading>Events: {{$this->totalAmount}}</flux:card.heading>
+            <flux:card.heading>Events: <b>{{$this->totalAmount}}</b></flux:card.heading>
 
             <flux:card.actions>
                 <flux:select
@@ -183,7 +183,7 @@ new #[Title('Event Counter')] class extends Component {
                             <flux:table.cell class="text-zinc-700">
                                 {{$item->dateFormatted}}
                             </flux:table.cell>
-                            <flux:table.cell align="center" class="**:cursor-pointer flex gap-4">
+                            <flux:table.cell align="center" class="**:cursor-pointer flex gap-0 lg:gap-1">
                                 <flux:button icon="trash" variant="ghost" wire:confirm="Do you want to delete event?"
                                              wire:click="delete({{$item->id}})"/>
                                 <flux:button icon="square-pen" variant="ghost" wire:click="edit({{$item->id}})"/>

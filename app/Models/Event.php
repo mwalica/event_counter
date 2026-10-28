@@ -26,7 +26,7 @@ class Event extends Model
     protected function dateFormatted(): Attribute
     {
         return Attribute::make(
-            get: fn() => Carbon::parse($this->event_date)->format('j F Y')
+            get: fn() => Carbon::parse($this->event_date)->format('j M Y')
         );
     }
 }

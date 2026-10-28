@@ -35,13 +35,13 @@
             <flux:sidebar.collapse class="in-data-flux-sidebar-on-desktop:not-in-data-flux-sidebar-collapsed-desktop:-mr-2" />
         </flux:sidebar.header>
         <flux:sidebar.nav>
-            <flux:sidebar.item icon="home" href="#">Events</flux:sidebar.item>
-            <flux:sidebar.item icon="inbox" href="#">Types</flux:sidebar.item>
-            <flux:sidebar.item icon="document-text" href="#">Archive</flux:sidebar.item>
+            <flux:sidebar.item icon="home" href="{{route('event.index')}}" wire:navigate>Events</flux:sidebar.item>
+            <flux:sidebar.item icon="inbox" href="{{route('type.index')}}" wire:navigate>Types</flux:sidebar.item>
+            <flux:sidebar.item icon="document-text" href="{{route('archive.index')}}" wire:navigate>Archive</flux:sidebar.item>
         </flux:sidebar.nav>
         <flux:sidebar.spacer />
         <flux:sidebar.nav>
-            <flux:sidebar.item icon="cog-6-tooth" href="#">Logout</flux:sidebar.item>
+            <flux:sidebar.item icon="cog-6-tooth" href="{{route('logout')}}">Logout</flux:sidebar.item>
         </flux:sidebar.nav>
 
     </flux:sidebar>

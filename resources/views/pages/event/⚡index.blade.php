@@ -126,10 +126,10 @@ new #[Title('Event Counter')] class extends Component {
 ?>
 
 <div class="mx-auto max-w-4xl flex flex-col gap-4">
-    <flux:heading level="3" size="xl" class="text-center font-semibold">Events</flux:heading>
+    <flux:heading level="3" size="xl" class="text-center font-semibold text-accent-content">Events</flux:heading>
 
     <flux:card variant="muted" body="flush">
-        <flux:card.header>
+        <flux:card.header class="py-4">
             <flux:card.heading>Events: {{$this->totalAmount}}</flux:card.heading>
 
             <flux:card.actions>
@@ -157,36 +157,36 @@ new #[Title('Event Counter')] class extends Component {
         <flux:card.body>
             <flux:table bleed>
                 <flux:table.columns>
-                    <flux:table.column class="w-full text-zinc-900">Name (description)</flux:table.column>
-                    <flux:table.column class="w-px whitespace-nowrap">Amount</flux:table.column>
-                    <flux:table.column class="w-px whitespace-nowrap" align="center"
+                    <flux:table.column class="w-full py-4! font-bold!">Name (description)</flux:table.column>
+                    <flux:table.column class="w-px whitespace-nowrap py-4! font-bold!">Amount</flux:table.column>
+                    <flux:table.column class="w-px whitespace-nowrap py-4! font-bold!" align="center"
                                        sortable
                                        :sorted="$sortBy === 'event_date'"
                                        :direction="$sortDirection"
                                        wire:click="sort('event_date')">Date
                     </flux:table.column>
-                    <flux:table.column class="w-px whitespace-nowrap"></flux:table.column>
+                    <flux:table.column class="w-px whitespace-nowrap py-4!"></flux:table.column>
                 </flux:table.columns>
                 <flux:table.rows>
                     @forelse($this->events as $item)
                         <flux:table.row :key="$item->id">
-                            <flux:table.cell variant="strong">
-                                <flux:heading> {{$item->type->name}}</flux:heading>
+                            <flux:table.cell  class="text-zinc-700">
+                                {{$item->type->name}}
                                 @if($item->description !== null)
                                     <flux:text
                                         class="text-zinc-400 font-light text-xs">{{$item->description}}</flux:text>
                                 @endif
                             </flux:table.cell>
-                            <flux:table.cell align="center">
+                            <flux:table.cell align="center" class="text-zinc-700">
                                 {{$item->amount}}
                             </flux:table.cell>
-                            <flux:table.cell>
+                            <flux:table.cell class="text-zinc-700">
                                 {{$item->dateFormatted}}
                             </flux:table.cell>
                             <flux:table.cell align="center" class="**:cursor-pointer flex gap-4">
-                                <flux:button icon="trash" wire:confirm="Do you want to delete event?"
+                                <flux:button icon="trash" variant="ghost" wire:confirm="Do you want to delete event?"
                                              wire:click="delete({{$item->id}})"/>
-                                <flux:button icon="square-pen" wire:click="edit({{$item->id}})"/>
+                                <flux:button icon="square-pen" variant="ghost" wire:click="edit({{$item->id}})"/>
                             </flux:table.cell>
                         </flux:table.row>
                     @empty
@@ -217,7 +217,7 @@ new #[Title('Event Counter')] class extends Component {
             </flux:field>
             <flux:textarea label="Description" wire:model="description"/>
             <flux:input type="number" label="Amount" wire:model="amount" badge="required"/>
-            <flux:input type="date" label="Event date" wire:model="eventDate" badge="required"/>
+            <flux:date-picker wire:model="eventDate" label="Event date" badge="required" />
             <flux:button type="submit" variant="primary" class="cursor-pointer">Save</flux:button>
         </form>
     </flux:modal>

@@ -2,22 +2,33 @@
 
 use App\Models\Type;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Title;
-use Livewire\Attributes\Validate;
 use Livewire\Component;
 
 new #[Title('Types - Event Counter')]
 class extends Component {
 
-    #[Validate('required|string|min:3')]
-    public $name = '';
+
+    public string $name = '';
+
+    public string $selectedColor = 'gray';
 
     #[Locked]
     public ?int $typeId = null;
 
     public ?Type $type = null;
+
+
+    public function rules(): array
+    {
+        return [
+            'name' => 'required|string|min:3',
+            'selectedColor' => ['required', Rule::in(array_keys(Type::COLORS))],
+        ];
+    }
 
     #[Computed]
     public function types(): Collection
@@ -44,6 +55,7 @@ class extends Component {
         $this->type = $type;
         $this->typeId = $type->id;
         $this->name = $type->name;
+        $this->selectedColor = $type->selected_color;
 
     }
 
@@ -51,12 +63,12 @@ class extends Component {
     {
         $this->validate();
         if (empty($this->type)) {
-            Type::create(['name' => $this->name]);
+            Type::create(['name' => $this->name, 'selected_color' => $this->selectedColor]);
         } else {
-            $this->type->update(['name' => $this->name]);
+            $this->type->update(['name' => $this->name, 'selected_color' => $this->selectedColor]);
         }
 
-        $this->reset('type', 'name');
+        $this->reset('type', 'name', 'selectedColor');
         unset($this->types);
         Flux::modal('type-form')->close();
 
@@ -64,7 +76,7 @@ class extends Component {
 
     public function closeModal()
     {
-        $this->reset('type');
+        $this->reset('type', 'name', 'selectedColor');
     }
 };
 ?>
@@ -87,6 +99,7 @@ class extends Component {
         <flux:card.body>
             <flux:table bleed>
                 <flux:table.columns>
+                    <flux:table.column class="w-px whitespace-nowrap py-4!"></flux:table.column>
                     <flux:table.column class="w-full py-4! font-bold!">Name</flux:table.column>
                     <flux:table.column class="w-px whitespace-nowrap py-4! font-bold!">Archived</flux:table.column>
                     <flux:table.column class="w-px whitespace-nowrap py-4!"></flux:table.column>
@@ -94,6 +107,9 @@ class extends Component {
                 <flux:table.rows>
                     @forelse($this->types as $type)
                         <flux:table.row :key="$type->id">
+                            <flux:table.cell>
+                                <div class="size-3 rounded-full {{ $type->colorClass }}"></div>
+                            </flux:table.cell>
                             <flux:table.cell class="text-zinc-700">{{$type->name}}</flux:table.cell>
                             <flux:table.cell align="center">
                                 <flux:switch :checked="$type->archived" wire:change="toggleArchived({{$type->id}})"/>
@@ -133,6 +149,19 @@ class extends Component {
         <flux:separator/>
         <form wire:submit="save()" autocomplete="off" class="space-y-6">
             <flux:input type="text" label="Name" wire:model="name" badge="required"/>
+
+            <flux:label badge="required">Type Color</flux:label>
+            <flux:select variant="listbox" placeholder="select color..." wire:model="selectedColor" badge="required">
+                @foreach(Type::COLORS as $key => $class)
+                    <flux:select.option :value="$key" :key="$key">
+                        <div class="flex items-center gap-2">
+                            <div class="rounded-full size-4 {{$class}}"></div>
+                            {{ucfirst($key)}}
+                        </div>
+                    </flux:select.option>
+                @endforeach
+            </flux:select>
+            <flux:error name="selectedColor"/>
             <flux:button type="submit" variant="primary" class="cursor-pointer">Save</flux:button>
         </form>
     </flux:modal>

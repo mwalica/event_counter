@@ -170,6 +170,7 @@ class extends Component {
         <flux:card.body>
             <flux:table bleed>
                 <flux:table.columns>
+                    <flux:table.column class="w-px whitespace-nowrap py-4!"></flux:table.column>
                     <flux:table.column class="w-full py-4! font-bold!">Name (description)</flux:table.column>
                     <flux:table.column class="w-px whitespace-nowrap py-4! font-bold!">Amount</flux:table.column>
                     <flux:table.column class="w-px whitespace-nowrap py-4! font-bold!" align="center"
@@ -183,6 +184,7 @@ class extends Component {
                 <flux:table.rows>
                     @forelse($this->events as $item)
                         <flux:table.row :key="$item->id">
+                            <flux:table.cell><div class="size-3 rounded-full {{$item->type->colorClass}}"></div></flux:table.cell>
                             <flux:table.cell class="text-zinc-700">
                                 {{$item->type->name}}
                                 @if($item->description !== null)
@@ -191,7 +193,7 @@ class extends Component {
                                 @endif
                             </flux:table.cell>
                             <flux:table.cell align="center" class="text-zinc-700">
-                                <flux:badge rounded :color="$item->badgeColor">{{$item->amount}}</flux:badge>
+                                {{$item->amount}}
                             </flux:table.cell>
                             <flux:table.cell class="text-zinc-700">
                                 {{$item->dateFormatted}}

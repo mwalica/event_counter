@@ -179,37 +179,39 @@ class extends Component {
                                        :direction="$sortDirection"
                                        wire:click="sort('event_date')">Date
                     </flux:table.column>
-                    <flux:table.column class="w-px whitespace-nowrap py-4! hidden sm:table-cell"></flux:table.column>
+                    <flux:table.column class="w-px whitespace-nowrap py-4!"></flux:table.column>
                 </flux:table.columns>
                 <flux:table.rows>
                     @forelse($this->events as $item)
                         <flux:table.row :key="$item->id">
                             <flux:table.cell><div class="size-2 sm:size-3 rounded-full {{$item->type->colorClass}}"></div></flux:table.cell>
-                            <flux:table.cell class="text-zinc-700 text-xs! sm:text-sm!">
+                            <flux:table.cell class="text-zinc-700">
                                 {{$item->type->name}}
                                 @if($item->description !== null)
                                     <flux:text
-                                        class="text-zinc-400 font-light text-xs">{{$item->description}}</flux:text>
+                                        class="text-zinc-400 font-light text-xs wrap-anywhere">{{$item->description}}</flux:text>
                                 @endif
                             </flux:table.cell>
-                            <flux:table.cell align="center" class="text-zinc-700 text-xs! sm:text-sm!">
+                            <flux:table.cell align="center" class="text-zinc-700 text-xs!">
                                 {{$item->amount}}
                             </flux:table.cell>
-                            <flux:table.cell class="text-zinc-700 hidden sm:table-cell">
+                            <flux:table.cell class="hidden sm:table-cell text-zinc-700">
                                 {{$item->dateFormatted}}
                             </flux:table.cell>
-                            <flux:table.cell class="text-zinc-700 sm:hidden text-xs!">
+                            <flux:table.cell class="text-zinc-700 sm:hidden">
                                 {{$item->dateFormattedMobile}}
                             </flux:table.cell>
-                            <flux:table.cell align="center" class="**:cursor-pointer gap-0 lg:gap-1 hidden sm:flex">
-                                <flux:button icon="trash" variant="ghost" wire:confirm="Do you want to delete event?"
-                                             wire:click="delete({{$item->id}})"/>
-                                <flux:button icon="square-pen" variant="ghost" wire:click="edit({{$item->id}})"/>
+                            <flux:table.cell align="center">
+                                <div class="**:cursor-pointer gap-0 lg:gap-1 flex">
+                                    <flux:button icon="trash" variant="ghost" size="sm" wire:confirm="Do you want to delete event?"
+                                                 wire:click="delete({{$item->id}})"/>
+                                    <flux:button icon="square-pen" variant="ghost" size="sm" wire:click="edit({{$item->id}})"/>
+                                </div>
                             </flux:table.cell>
                         </flux:table.row>
                     @empty
                         <flux:table.row>
-                            <flux:table.cell variant="strong" colspan="4" align="center">
+                            <flux:table.cell variant="strong" colspan="5" align="center">
                                 No events in DB
                             </flux:table.cell>
                         </flux:table.row>

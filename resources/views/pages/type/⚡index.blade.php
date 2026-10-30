@@ -119,10 +119,12 @@ class extends Component {
                                              wire:confirm="Do you want to delete type?"
                                              wire:click="delete({{$type->id}})"
                                              variant="ghost"
+                                             size="sm"
                                 />
                                 <flux:button icon="square-pen"
                                              wire:click="edit({{$type->id}})"
                                              variant="ghost"
+                                             size="sm"
                                 />
                             </flux:table.cell>
                         </flux:table.row>

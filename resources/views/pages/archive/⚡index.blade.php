@@ -118,16 +118,19 @@ class extends Component {
                                         class="text-zinc-400 font-light text-xs">{{$item->description}}</flux:text>
                                 @endif
                             </flux:table.cell>
-                            <flux:table.cell align="center" class="text-zinc-700">
+                            <flux:table.cell align="center" class="text-zinc-700 text-xs!">
                                 {{$item->amount}}
                             </flux:table.cell>
-                            <flux:table.cell class="text-zinc-700">
+                            <flux:table.cell class="hidden sm:table-cell text-zinc-700">
                                 {{$item->dateFormatted}}
+                            </flux:table.cell>
+                            <flux:table.cell class="text-zinc-700 sm:hidden">
+                                {{$item->dateFormattedMobile}}
                             </flux:table.cell>
                         </flux:table.row>
                     @empty
                         <flux:table.row>
-                            <flux:table.cell variant="strong" colspan="3" align="center">
+                            <flux:table.cell variant="strong" colspan="4" align="center">
                                 No events in DB
                             </flux:table.cell>
                         </flux:table.row>

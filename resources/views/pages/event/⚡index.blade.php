@@ -185,7 +185,7 @@ class extends Component {
                     @forelse($this->events as $item)
                         <flux:table.row :key="$item->id">
                             <flux:table.cell><div class="size-3 rounded-full {{$item->type->colorClass}}"></div></flux:table.cell>
-                            <flux:table.cell class="text-zinc-700">
+                            <flux:table.cell class="text-zinc-700 text-xs! sm:text-sm!">
                                 {{$item->type->name}}
                                 @if($item->description !== null)
                                     <flux:text

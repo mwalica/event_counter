@@ -32,15 +32,11 @@ class Event extends Model
         );
     }
 
-    protected function badgeColor() :Attribute
+    protected function dateFormattedMobile(): Attribute
     {
         return Attribute::make(
-            get: fn() => match($this->amount) {
-                1 => 'sky',
-                2 => 'fuchsia',
-                3 => 'red',
-                default => 'lime'
-            }
+            get: fn() => Carbon::parse($this->event_date)->format('d/m/y')
         );
     }
+
 }
